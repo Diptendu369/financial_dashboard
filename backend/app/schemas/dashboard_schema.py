@@ -23,6 +23,8 @@ class MonthlyTrendItem(BaseModel):
 
 class CategorySummaryResponse(BaseModel):
     categories: List[CategorySummaryItem]
+    income_categories: List[CategorySummaryItem]
+    expense_categories: List[CategorySummaryItem]
 
 
 class MonthlyTrendResponse(BaseModel):

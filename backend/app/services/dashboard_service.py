@@ -27,7 +27,30 @@ def get_category_summary(db: Session):
         .group_by(Transaction.category)
         .all()
     )
-    return {"categories": [{"category": r[0], "total": float(r[1])} for r in rows]}
+    typed_rows = (
+        db.query(
+            Transaction.type,
+            Transaction.category,
+            func.coalesce(func.sum(Transaction.amount), 0.0),
+        )
+        .filter(Transaction.is_deleted.is_(False))
+        .group_by(Transaction.type, Transaction.category)
+        .all()
+    )
+    income_categories = []
+    expense_categories = []
+    for tx_type, category, total in typed_rows:
+        item = {"category": category, "total": float(total)}
+        if tx_type == TransactionType.income:
+            income_categories.append(item)
+        elif tx_type == TransactionType.expense:
+            expense_categories.append(item)
+
+    return {
+        "categories": [{"category": r[0], "total": float(r[1])} for r in rows],
+        "income_categories": income_categories,
+        "expense_categories": expense_categories,
+    }
 
 
 def get_monthly_trend(db: Session):

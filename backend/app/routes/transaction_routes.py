@@ -34,6 +34,11 @@ def list_transactions(
     page: int = Query(default=1, ge=1),
     limit: int = Query(default=10, ge=1, le=100),
 ):
+    if start_date and end_date and start_date > end_date:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "bad_request", "message": "start_date cannot be greater than end_date"},
+        )
     query = query_transactions(db, type, category, start_date, end_date, search)
     offset = (page - 1) * limit
     return query.offset(offset).limit(limit).all()

@@ -1,7 +1,7 @@
 import logging
 import os
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -46,6 +46,16 @@ async def validation_exception_handler(_: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=400,
         content={"error": "bad_request", "message": "Validation failed", "details": exc.errors()},
+    )
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(_: Request, exc: HTTPException):
+    if isinstance(exc.detail, dict):
+        return JSONResponse(status_code=exc.status_code, content=exc.detail)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": "http_error", "message": str(exc.detail)},
     )
 
 
