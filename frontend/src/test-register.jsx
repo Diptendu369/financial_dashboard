@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
-export default function Register() {
+export default function TestRegister() {
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -269,8 +269,7 @@ export default function Register() {
                 Already have an account?{" "}
               </span>
               <button
-                type="button"
-                onClick={() => window.location.href = '/login'}
+                onClick={() => navigate('/login')}
                 style={{ 
                   color: "#6366F1", 
                   background: "none",

@@ -5,6 +5,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import { useAuth } from "./context/AuthContext";
+import { Component as EtherealShadow } from "./components/ui/ethereal-shadow";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -25,26 +26,71 @@ function Layout({ children }) {
   const drawerWidth = 240;
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f6f8fb" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", position: "relative" }}>
       <CssBaseline />
-      <Navbar onMenuClick={() => setMobileOpen((prev) => !prev)} showMenu={isMobile} />
-      <Sidebar
-        drawerWidth={drawerWidth}
-        mobileOpen={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        isMobile={isMobile}
-      />
+      
+      {/* Ethereal Shadow Background */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 0,
+          overflow: "hidden"
+        }}
+      >
+        <EtherealShadow
+          color="rgba(30, 58, 138, 0.8)"
+          animation={{ scale: 100, speed: 75 }}
+          noise={{ opacity: 0.4, scale: 1.3 }}
+          sizing="cover"
+          style={{
+            width: "100%",
+            height: "100%"
+          }}
+        />
+      </Box>
+
+      {/* Navigation */}
+      <Box sx={{ position: "relative", zIndex: 1 }}>
+        <Navbar onMenuClick={() => setMobileOpen((prev) => !prev)} showMenu={isMobile} />
+        <Sidebar
+          drawerWidth={drawerWidth}
+          mobileOpen={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          isMobile={isMobile}
+        />
+      </Box>
+
+      {/* Main Content */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
-          p: { xs: 2, md: 3 }
+          p: { xs: 2, md: 3 },
+          position: "relative",
+          zIndex: 1
         }}
       >
         <Toolbar />
-        <Box sx={{ maxWidth: 1400, mx: "auto" }}>{children}</Box>
+        <Box 
+          sx={{ 
+            maxWidth: 1800, 
+            mx: "auto",
+            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            backdropFilter: "blur(15px)",
+            borderRadius: 4,
+            boxShadow: "0 12px 48px rgba(0, 0, 0, 0.15)",
+            p: 4,
+            minHeight: "calc(100vh - 120px)"
+          }}
+        >
+          {children}
+        </Box>
       </Box>
     </Box>
   );
@@ -85,7 +131,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
